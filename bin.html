@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استخراج کارت‌های اعتباری</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;800&display=swap">
+    <style>
+        * {margin:0;padding:0;box-sizing:border-box;}
+        html {font-size:16px;height:100%;}
+        body {
+          min-height:100vh;
+          font-family:'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
+          background:#0d0019;
+          background:linear-gradient(145deg, #0d0019, #1a0033, #2a0055);
+          color:#d0bfff;
+          direction:rtl;
+          overflow-x:hidden;
+          position:relative;
+        }
+        body::before {
+          content:'';
+          position:absolute;
+          inset:0;
+          background-image:
+            radial-gradient(circle at 20% 80%, #ff00aa22 0%, transparent 20%),
+            radial-gradient(circle at 80% 20%, #00ffff22 0%, transparent 20%),
+            radial-gradient(circle at 40% 40%, #aa00ff22 0%, transparent 20%);
+          animation:particleMove 25s linear infinite;
+          pointer-events:none;
+          z-index:0;
+        }
+        @keyframes particleMove {
+          0% {transform:translate(0,0);}
+          100% {transform:translate(100px, -100px);}
+        }
+        body::-webkit-scrollbar {width:10px;}
+        body::-webkit-scrollbar-track {background:transparent;}
+        body::-webkit-scrollbar-thumb {
+          background:linear-gradient(#ff00aa, #00ffff);
+          border-radius:5px;
+          box-shadow:0 0 10px #ff00aa;
+        }
+        .container {
+          max-width:1000px;
+          margin:0 auto;
+          padding:20px;
+          position:relative;
+          z-index:1;
+        }
+        .panel {
+          background:rgba(15, 10, 35, 0.5);
+          backdrop-filter:blur(18px);
+          -webkit-backdrop-filter:blur(18px);
+          border:1px solid rgba(170, 0, 255, 0.4);
+          border-radius:24px;
+          padding:36px;
+          margin:30px 0;
+          box-shadow:0 10px 40px rgba(0,0,0,0.6), 0 0 30px rgba(170, 0, 255, 0.3);
+          transition:all 0.4s ease;
+          position:relative;
+          overflow:hidden;
+        }
+        .panel::before {
+          content:'';
+          position:absolute;
+          inset:0;
+          border-radius:24px;
+          padding:2px;
+          background:linear-gradient(45deg, #ff00aa, #00ffff, #aa00ff);
+          mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          mask-composite:exclude;
+          -webkit-mask-composite:xor;
+          pointer-events:none;
+          opacity:0.6;
+        }
+        .panel:hover {transform:translateY(-10px);}
+        h2.big {
+          font-size:3rem;
+          font-weight:800;
+          text-align:center;
+          margin-bottom:24px;
+          background:linear-gradient(90deg, #ff00aa, #00ffff, #ff00ff);
+          -webkit-background-clip:text;
+          -webkit-text-fill-color:transparent;
+          text-shadow:0 0 20px rgba(255, 0, 170, 0.6);
+          animation:neonPulse 4s ease infinite;
+        }
+        a.big {
+          font-size:1rem;
+          font-weight:800;
+          text-align:center;
+          margin-bottom:24px;
+          background:linear-gradient(90deg, #ff00aa, #00ffff, #ff00ff);
+          -webkit-background-clip:text;
+          -webkit-text-fill-color:transparent;
+          text-shadow:0 0 20px rgba(255, 0, 170, 0.6);
+          animation:neonPulse 4s ease infinite;
+        }
+        @keyframes neonPulse {
+          0%,100% {text-shadow:0 0 20px rgba(255,0,170,0.6);}
+          50% {text-shadow:0 0 40px rgba(0,255,255,0.8);}
+        }
+        p.small {
+          font-size:1.05rem;
+          opacity:0.9;
+          margin-bottom:20px;
+          text-align:center;
+        }
+        textarea {
+          width:100%;
+          height:220px;
+          padding:18px;
+          border-radius:16px;
+          border:2px solid rgba(170, 0, 255, 0.5);
+          background:rgba(10, 5, 25, 0.6);
+          color:#fff;
+          font-size:1.05rem;
+          resize:none;
+          transition:all 0.4s ease;
+        }
+        textarea:focus {
+          outline:none;
+          border-color:#00ffff;
+          box-shadow:0 0 30px rgba(0,255,255,0.4);
+        }
+        button#main-btn {
+          display:block;
+          margin:30px auto 0;
+          padding:18px 50px;
+          font-size:1.3rem;
+          font-weight:700;
+          color:#000;
+          background:linear-gradient(90deg, #ff00aa, #00ffff);
+          border:none;
+          border-radius:16px;
+          cursor:pointer;
+          box-shadow:0 0 30px rgba(255,0,170,0.6);
+          transition:all 0.4s ease;
+          position:relative;
+          overflow:hidden;
+        }
+        button#main-btn::before {
+          content:'';
+          position:absolute;
+          inset:0;
+          background:linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+          transform:translateX(-100%);
+          transition:0.6s;
+        }
+        button#main-btn:hover::before {transform:translateX(100%);}
+        button#main-btn:hover {transform:scale(1.05);}
+        button#main-btn:disabled {opacity:0.7; cursor:not-allowed; transform:none;}
+        .progress-container {
+          width:100%;
+          height:12px;
+          background:rgba(0,0,0,0.4);
+          border-radius:12px;
+          margin:25px 0;
+          overflow:hidden;
+          box-shadow:inset 0 0 10px rgba(0,0,0,0.5);
+          display:none;
+        }
+        .progress-bar {
+          height:100%;
+          width:0%;
+          background:linear-gradient(90deg, #ff00aa, #00ffff);
+          border-radius:12px;
+          transition:width 0.4s ease;
+          box-shadow:0 0 20px rgba(0,255,255,0.8);
+          position:relative;
+        }
+        .progress-bar::after {
+          content:'';
+          position:absolute;
+          inset:0;
+          background:linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+          animation:shimmer 2s linear infinite;
+        }
+        @keyframes shimmer {0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
+        .progress-text {
+          text-align:center;
+          margin-top:10px;
+          font-size:1.1rem;
+          color:#00ffff;
+          text-shadow:0 0 10px #00ffff;
+        }
+        #output {
+          width:100%;
+          height:220px;
+          padding:18px;
+          border-radius:16px;
+          border:2px solid rgba(0, 255, 170, 0.5);
+          background:rgba(10, 25, 15, 0.6);
+          color:#00ffaa;
+          font-size:1.05rem;
+          resize:none;
+          margin-top:20px;
+          transition:all 0.4s ease;
+        }
+        #output:focus {
+          outline:none;
+          border-color:#00ffaa;
+          box-shadow:0 0 30px rgba(0,255,170,0.4);
+        }
+        .copy-all-btn {
+          display:block;
+          margin:20px auto 0;
+          padding:14px 40px;
+          font-size:1.2rem;
+          font-weight:700;
+          color:#000;
+          background:linear-gradient(90deg, #00ffaa, #00ffff);
+          border:none;
+          border-radius:16px;
+          cursor:pointer;
+          box-shadow:0 0 30px rgba(0,255,170,0.6);
+        }
+        .copy-all-btn:hover {
+          transform:scale(1.05);
+        }
+        #counts {
+          text-align:center;
+          font-size:1.4rem;
+          font-weight:700;
+          margin:30px 0;
+          padding:15px;
+          background:rgba(0,255,170,0.2);
+          border-radius:12px;
+          color:#00ffaa;
+          text-shadow:0 0 15px #00ffaa;
+        }
+        @keyframes fadeUp {from {opacity:0; transform:translateY(30px);} to {opacity:1; transform:translateY(0);}}
+        .fade-in {animation:fadeUp 0.8s ease-out forwards;}
+        @media (max-width:768px) {
+          h2.big {font-size:2.4rem;}
+          .panel {padding:28px;}
+          textarea, #output {height:180px;}
+          button#main-btn {padding:16px 40px; font-size:1.2rem;}
+        }
+    </style>
+</head>
+<header style="text-align:center;">
+  <a href="index.html"
+     class="big"
+     style="display:inline-block;padding:10px 20px;text-decoration:none;border:1px solid currentColor;margin:5px;">
+    Card Cheaker
+  </a>
+
+  <a href="https://namso-gen.com/?tab=advance&network=MasterCard"
+     class="big"
+     style="display:inline-block;padding:10px 20px;text-decoration:none;border:1px solid currentColor;margin:5px;">
+    ساخت کارت
+  </a>
+</header>
+
+<body>
+    <div class="container">
+        <div class="panel fade-in">
+            <h2 class="big">استخراج کارت‌های اعتباری</h2>
+            <p class="small">لیست کارت‌ها را وارد کنید → فقط بخش اصلی (card|mm|yy|cvv) استخراج و در خروجی نمایش داده می‌شود.</p>
+            <textarea id="input" placeholder="مثال:
+5106986312001037|01|2030|279|USD|4900
+5106981150616426|01|2030|213|USD|4700
+5106984510632802|01|2030|315|USD|4400"></textarea>
+            <button id="main-btn">استخراج کن</button>
+            
+            <div class="progress-container" id="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div class="progress-text" id="progress-text">در حال پردازش...</div>
+            
+            <textarea id="output" placeholder="خروجی استخراج شده اینجا نمایش داده می‌شود..." readonly></textarea>
+            <button class="copy-all-btn" id="copy-all-btn" style="display:none;">کپی تمام خروجی</button>
+            
+            <div id="counts"></div>
+        </div>
+    </div>
+
+    <script>
+        const inputTextarea = document.getElementById('input');
+        const outputTextarea = document.getElementById('output');
+        const btn = document.getElementById('main-btn');
+        const copyAllBtn = document.getElementById('copy-all-btn');
+        const countsDiv = document.getElementById('counts');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+
+        btn.addEventListener('click', () => {
+            const text = inputTextarea.value.trim();
+            if (!text) return alert('لطفاً ورودی را وارد کنید!');
+
+            btn.disabled = true;
+            outputTextarea.value = '';
+            countsDiv.textContent = '';
+            progressContainer.style.display = 'block';
+            progressText.style.display = 'block';
+            copyAllBtn.style.display = 'none';
+
+            setTimeout(() => {
+                const lines = text.split('\n').filter(line => line.trim());
+                const extractedLines = [];
+
+                lines.forEach((line, index) => {
+                    const parts = line.trim().split('|');
+                    if (parts.length >= 4) {
+                        let year = parts[2].trim();
+                        if (year.length === 4) year = year.slice(2);
+                        const extracted = `${parts[0].trim()}|${parts[1].trim()}|${year}|${parts[3].trim()}`;
+                        extractedLines.push(extracted);
+                    }
+
+                    const percent = ((index + 1) / lines.length) * 100;
+                    progressBar.style.width = percent + '%';
+                    progressText.textContent = `پردازش شده: ${index + 1} از ${lines.length}`;
+                });
+
+                outputTextarea.value = extractedLines.join('\n');
+                countsDiv.textContent = `تعداد کارت‌های استخراج شده: ${extractedLines.length}`;
+                progressContainer.style.display = 'none';
+                progressText.style.display = 'none';
+                copyAllBtn.style.display = 'block';
+                btn.disabled = false;
+            }, 300);
+        });
+
+        copyAllBtn.addEventListener('click', () => {
+            outputTextarea.select();
+            navigator.clipboard.writeText(outputTextarea.value).then(() => {
+                copyAllBtn.textContent = 'کپی شد!';
+                setTimeout(() => {
+                    copyAllBtn.textContent = 'کپی تمام خروجی';
+                }, 2000);
+            });
+        });
+    </script>
+<p style="text-align:center;color:#acbd8e;">
+  <span style="cursor:pointer;"
+        onmouseover="this.querySelector('span').style.display='inline';"
+        onmouseout="this.querySelector('span').style.display='none';">
+    Create By Shayan Ghadamian
+    <span style="display:none;margin-left:10px;color:#acbd8e;">
+      <a href="https://github.com/shayanghad0" style="color:#acbd8e;text-decoration:none;margin-right:6px;">
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/github.svg"
+             style="width:16px;vertical-align:middle;filter:invert(65%) sepia(45%) saturate(2361%) hue-rotate(87deg) brightness(96%) contrast(90%);">
+      </a>
+      <a href="https://t.me/shayanghad0" style="color:#acbd8e;text-decoration:none;margin-left:6px;">
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/telegram.svg"
+             style="width:16px;vertical-align:middle;filter:invert(65%) sepia(45%) saturate(2361%) hue-rotate(87deg) brightness(96%) contrast(90%);">
+      </a>
+    </span>
+  </span>
+</p>
+
+</body>
+</html>
